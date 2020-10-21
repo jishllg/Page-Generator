@@ -11,6 +11,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 const render = require("./lib/htmlRenderer");
 
 let employees = [];
+let employee = {};
 
 const questionType = [{
     type: "list",
@@ -51,18 +52,75 @@ const questionIntern = [{
     message: "Enter the intern's school:"
 }];
 
-async function ask(question) {
-    response = await inquirer.prompt(question);
-    return response;
+askType();
+
+function askType() {
+    inquirer.prompt(questionType).then(function(response) {
+        employee.type = response.type;
+        if (employee.type === "RENDER") {
+            renderPage();
+        }
+        else {
+            askGeneral();
+        }
+    });
 }
 
-employees.push(new Manager("fefej", 1, "fk@webkitCa", 456));
-employees.push(new Engineer("aaaaa", 1, "fef@tggs", "ffffff"));
-employees.push(new Intern("eee", 1, "ukghjk@hjl", "Shcoollelel"));
+function askGeneral() {
+    inquirer.prompt(questionsGeneral).then(function(response) {
+        employee.name = response.name;
+        employee.id = response.id;
+        employee.email = response.email;
+        switch (employee.type) {
+            case "Manager":
+                askManager();
+                break;
 
-html = render(employees);
+            case "Engineer":
+                askEngineer();
+                break;
+            
+            case "Intern":
+                askIntern();
 
-fs.writeFileSync(outputPath, html);
+            default:
+                break;
+        }
+    });
+}
+
+function askManager() {
+    inquirer.prompt(questionManager).then(function(response) {
+        employee.officeNumber = response.office;
+        let manager = new Manager(employee.name, employee.id, employee.email, employee.officeNumber);
+        employees.push(manager);
+        askType();
+    });
+}
+
+function askEngineer() {
+    inquirer.prompt(questionEngineer).then(function(response) {
+        employee.github = response.github;
+        let engineer = new Engineer(employee.name, employee.id, employee.email, employee.github);
+        employees.push(engineer);
+        askType();
+    });
+}
+
+function askIntern() {
+    inquirer.prompt(questionIntern).then(function(response) {
+        employee.school = response.school;
+        let intern = new Intern(employee.name, employee.id, employee.email, employee.school);
+        employees.push(intern);
+        askType();
+    });
+}
+
+function renderPage() {
+    html = render(employees);
+    fs.writeFileSync(outputPath, html);
+    console.log('Page saved in output folder as "team.html"')
+}
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
