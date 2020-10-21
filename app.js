@@ -10,6 +10,59 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+let employees = [];
+
+const questionType = [{
+    type: "list",
+    name: "type",
+    message: "Select an employee type to add a new employee, or select RENDER to render the HTML page:",
+    choices: ["Manager", "Engineer", "Intern", "RENDER"]
+}];
+
+const questionsGeneral = [{
+    type: "input",
+    name: "name",
+    message: "Enter the employee's name:"
+},{
+    type: "number",
+    name: "id",
+    message: "Enter the employee's ID number:"
+},{
+    type: "input",
+    name: "email",
+    message: "Enter the employee's email:"
+}];
+
+const questionManager = [{
+    type: "input",
+    name: "office",
+    message: "Enter the manager's office number:"
+}];
+
+const questionEngineer = [{
+    type: "input",
+    name: "github",
+    message: "Enter the engineer's Github:"
+}];
+
+const questionIntern = [{
+    type: "input",
+    name: "school",
+    message: "Enter the intern's school:"
+}];
+
+async function ask(question) {
+    response = await inquirer.prompt(question);
+    return response;
+}
+
+employees.push(new Manager("fefej", 1, "fk@webkitCa", 456));
+employees.push(new Engineer("aaaaa", 1, "fef@tggs", "ffffff"));
+employees.push(new Intern("eee", 1, "ukghjk@hjl", "Shcoollelel"));
+
+html = render(employees);
+
+fs.writeFileSync(outputPath, html);
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
